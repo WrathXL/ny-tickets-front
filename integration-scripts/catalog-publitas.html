@@ -33,11 +33,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <ul>
-                <li>Coffee</li>
-                <li>Tea</li>
-                <li>Milk</li>
-              </ul>
+              <iframe src="http://localhost:9000/#/cart/1" width="100%" height="100%"></iframe>
             </div>
         </div>
       </div>
@@ -47,7 +43,7 @@
 
     // Viewer API
 
-    // * Add cart button
+    // * Cart button on the sidebar
     api.setCartButtonAction(function () {
       const modal = new bootstrap.Modal("#modal");
       modal.show();
