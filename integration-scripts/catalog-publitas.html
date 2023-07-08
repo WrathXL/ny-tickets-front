@@ -16,16 +16,17 @@
       '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">'
     );
 
-    // * Add cart modal
-    const div = document.createElement("div");
-    div.classList.add("modal");
-    div.classList.add("fade");
-    div.setAttribute("id", "modal");
-    div.setAttribute("tabindex", "-1");
-    div.setAttribute("aria-labelledby", "modalLabel");
-    div.setAttribute("aria-hidden", "true");
+    function createModalDiv() {
+      // Creates a modal element with an iframe of the cart page inside
+      const div = document.createElement("div");
+      div.classList.add("modal");
+      div.classList.add("fade");
+      div.setAttribute("id", "modal");
+      div.setAttribute("tabindex", "-1");
+      div.setAttribute("aria-labelledby", "modalLabel");
+      div.setAttribute("aria-hidden", "true");
 
-    div.innerHTML = `
+      div.innerHTML = `
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -33,20 +34,38 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <iframe src="http://localhost:9000/#/cart/1" width="100%" height="100%"></iframe>
+              <iframe src="http://localhost:9000/cart/" width="100%" height="100%"></iframe>
             </div>
         </div>
       </div>
         `;
-
-    document.body.appendChild(div);
+      return div;
+    }
 
     // Viewer API
 
     // * Cart button on the sidebar
     api.setCartButtonAction(function () {
+      const modalDiv = createModalDiv();
+      document.body.appendChild(modalDiv);
       const modal = new bootstrap.Modal("#modal");
+      modalDiv.addEventListener("hidden.bs.modal", function () {
+        modalDiv.remove();
+      });
       modal.show();
     }, "See cart items");
+
+    // * CTA on product detail page
+    api.setProductAction(function (products, onOpen, onClose) {
+      var url = `http://localhost:9000/product/${products[0].webshopIdentifier}`; // create a URL based on products
+      console.log(products);
+      onOpen(); // update the address bar and browser title
+
+      // show custom product page
+      api
+        .showExternalContent(url, { width: "600px" })
+        // revert the address bar and browser title once iframe is closed
+        .on("close", onClose);
+    });
   };
 </script>

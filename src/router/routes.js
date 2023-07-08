@@ -6,6 +6,7 @@ const routes = [
   },
   {
     path: "/cart/:id",
+    alias: "/cart",
     component: () => import("components/CartDetail.vue"),
     props: true,
   },

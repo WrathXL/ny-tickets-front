@@ -36,20 +36,29 @@ import axios from "axios";
 const props = defineProps({
   id: {
     type: Number,
-    required: true,
   },
 });
 
 const cartItems = ref();
 
-function load() {
-  axios.get(`${Resources.CART}/${props.id}`).then(({ data }) => {
+async function getCardId() {
+  let cartId = props.id;
+  if (!cartId) {
+    cartId = await CartService.getCart();
+  }
+  return cartId;
+}
+
+async function load() {
+  const cartId = await getCardId();
+  axios.get(`${Resources.CART}/${cartId}`).then(({ data }) => {
     cartItems.value = data;
   });
 }
 
-function onDeleteItem(productId) {
-  CartService.remove(props.id, productId).then(() => {
+async function onDeleteItem(productId) {
+  const cartId = await getCardId();
+  CartService.remove(cartId, productId).then(() => {
     load();
   });
 }
