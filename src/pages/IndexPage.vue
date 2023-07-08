@@ -8,20 +8,10 @@
 
 <script setup>
 import { onMounted } from "vue";
-import { createDynamicScript } from "../tools";
-const publitasScriptAttr = {
-  "data-publication": "https://view.publitas.com/publitas-jblo7zgo6geb/ny/",
-  "data-publication-aspect-ratio": 1.294452347083926,
-  "data-responsive": true,
-  "data-width": undefined,
-  "data-wrapper-id": "publitas-embed-uk2qc1o9w8",
-  "publitas-embed": "true",
-  src: "https://view.publitas.com/embed.js",
-  type: "text/javascript",
-};
+import { useCatalogScript } from "../tools";
 
-onMounted(() => {
-  const publitasScript = createDynamicScript(publitasScriptAttr);
-  document.head.appendChild(publitasScript);
-});
+useCatalogScript(
+  "publitas-embed-uk2qc1o9w8",
+  "https://view.publitas.com/publitas-jblo7zgo6geb/ny/"
+);
 </script>

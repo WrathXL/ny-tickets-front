@@ -23,6 +23,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { Resources } from "../api";
 import axios from "axios";
 
 const props = defineProps({
@@ -34,7 +35,7 @@ const props = defineProps({
 
 const cartItems = ref();
 
-axios.get(`http://127.0.0.1:5000/cart/${props.id}`).then(({ data }) => {
+axios.get(`${Resources.CART}/${props.id}`).then(({ data }) => {
   cartItems.value = data;
 });
 </script>

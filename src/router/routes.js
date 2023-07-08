@@ -6,12 +6,15 @@ const routes = [
   },
   {
     path: "/cart/:id",
-    component: () => import("pages/CartPage.vue"),
+    component: () => import("components/CartDetail.vue"),
+    props: true,
+  },
+  {
+    path: "/product/:id",
+    component: () => import("components/ProductDetail.vue"),
     props: true,
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
