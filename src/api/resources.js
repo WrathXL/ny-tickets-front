@@ -1,4 +1,4 @@
-const BASE_API = "http://127.0.0.1:5000";
+const BASE_API = "https://king-prawn-app-sfuv2.ondigitalocean.app";
 
 export const Resources = {
   CART: `${BASE_API}/cart`,

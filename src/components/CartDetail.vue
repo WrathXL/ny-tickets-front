@@ -1,7 +1,28 @@
 <template>
-  <q-card>
-    <q-card-section>
-      <q-list v-if="cartItems">
+  <q-card flat v-if="cartItems">
+    <q-card-section v-if="!cartItems.length">
+      <div class="text-h6">Your cart is empty</div>
+      <div class="text-subtitle">
+        Continue exploring our catalog and add some items
+      </div>
+    </q-card-section>
+    <q-card-section
+      v-if="cartItems.length"
+      class="q-pa-none row justify-between"
+    >
+      <div class="text-h6">
+        Your total is: <strong>{{ `$ ${total}` }}</strong>
+      </div>
+      <q-btn
+        color="primary"
+        label="Go to Checkout"
+        icon="mdi-cart"
+        @click="$router.push('/checkout')"
+      />
+    </q-card-section>
+    <q-card-section v-if="cartItems.length">
+      <div class="text-h6">Review:</div>
+      <q-list v-if="cartItems" class="q-mt-md">
         <div v-for="(item, idx) in cartItems" :key="idx">
           <q-item>
             <q-item-section avatar>
@@ -25,11 +46,12 @@
         </div>
       </q-list>
     </q-card-section>
+    <q-card-actions> </q-card-actions>
   </q-card>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { CartService, Resources } from "../api";
 import axios from "axios";
 import { notifyCartContentChange } from "src/tools";
@@ -41,6 +63,10 @@ const props = defineProps({
 });
 
 const cartItems = ref();
+const total = computed(() => {
+  if (!cartItems.value) return 0;
+  return cartItems.value.reduce((acc, item) => acc + item.price, 0);
+});
 
 async function getCardId() {
   let cartId = props.id;
