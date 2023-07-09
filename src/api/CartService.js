@@ -15,6 +15,11 @@ export const CartService = {
     }
     return cartId;
   },
+  async getCartItems() {
+    const cartId = await this.getCart();
+    const { data } = await axios.get(`${Resources.CART}/${cartId}`);
+    return data;
+  },
 
   async add(productId) {
     const cartId = await this.getCart();

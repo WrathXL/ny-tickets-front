@@ -12,7 +12,7 @@
 
     <q-card-actions class="row justify-center q-mt-lg">
       <q-btn
-        v-if="!isInCart(product.id)"
+        v-if="!isInCart"
         color="primary"
         icon="mdi-cart"
         icons-size="sm"
@@ -40,21 +40,35 @@
 import axios from "axios";
 import { CartService, Resources } from "src/api";
 import { notifyCartContentChange } from "src/tools";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const props = defineProps({
-  id: {
-    type: Number,
+  slug: {
+    type: String,
     required: true,
   },
 });
 const stars = ref(4);
-const products = ref([]);
+const cart = ref([]);
 const product = ref();
+const products = ref();
+
+const isInCart = computed(() => cart.value.find((p) => p.slug === props.slug));
 
 async function onAddToCart() {
-  const products = await CartService.add(props.id);
-  notifyCartContentChange(products.length);
+  const productId = products.value.find((p) => p.slug === props.slug).id;
+  cart.value = await CartService.add(productId);
+  notifyCartContentChange(cart.value.length);
+}
+
+async function loadCart() {
+  cart.value = await CartService.getCartItems();
+}
+
+function loadProduct() {
+  axios.get(`${Resources.PRODUCT}/${props.slug}`).then(({ data }) => {
+    product.value = data;
+  });
 }
 
 function loadProducts() {
@@ -63,20 +77,9 @@ function loadProducts() {
   });
 }
 
-function loadProduct() {
-  axios.get(`${Resources.PRODUCT}/${props.id}`).then(({ data }) => {
-    product.value = data;
-  });
-}
-
-function isInCart(productId) {
-  console.log("productId", productId);
-  console.log("products", products.value);
-  return products.value.some((product) => product.id === productId);
-}
-
 onMounted(() => {
-  loadProducts();
   loadProduct();
+  loadProducts();
+  loadCart();
 });
 </script>
