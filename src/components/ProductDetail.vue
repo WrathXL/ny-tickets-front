@@ -1,20 +1,38 @@
 <template>
-  <q-card v-if="product">
-    <q-card class="my-card" flat bordered>
-      <q-card-section class="q-pt-none">
-        <div class="text-subtitle1">{{ product.name }}</div>
-        <div class="text-caption text-grey">
-          {{ product.description }}
-        </div>
-      </q-card-section>
+  <q-card flat v-if="product && products" class="fit">
+    <q-card-section class="row justify-center">
+      <q-img :src="product.url" width="500px" height="400px" />
+    </q-card-section>
+    <q-card-section class="q-pt-none">
+      <div class="text-h5 q-mt-md">{{ product.name }}</div>
+      <div class="text-caption text-grey q-mt-md">
+        {{ product.description }}
+      </div>
+    </q-card-section>
 
-      <q-separator />
-
-      <q-card-actions>
-        <q-btn flat round icon="event" />
-        <q-btn flat color="primary" @click="onAddToCart"> Add to cart </q-btn>
-      </q-card-actions>
-    </q-card>
+    <q-card-actions class="row justify-center q-mt-lg">
+      <q-btn
+        v-if="!isInCart(product.id)"
+        color="primary"
+        icon="mdi-cart"
+        icons-size="sm"
+        no-caps
+        class="text-weight-bold text-h6"
+        @click="onAddToCart"
+      >
+        Add to cart
+      </q-btn>
+      <q-btn
+        v-else
+        color="positive"
+        icon="mdi-cart-check"
+        icons-size="sm"
+        no-caps
+        class="text-weight-bold text-h6"
+      >
+        You added this product to your cart
+      </q-btn>
+    </q-card-actions>
   </q-card>
 </template>
 
@@ -22,7 +40,7 @@
 import axios from "axios";
 import { CartService, Resources } from "src/api";
 import { notifyCartContentChange } from "src/tools";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps({
   id: {
@@ -31,6 +49,7 @@ const props = defineProps({
   },
 });
 const stars = ref(4);
+const products = ref([]);
 const product = ref();
 
 async function onAddToCart() {
@@ -38,7 +57,26 @@ async function onAddToCart() {
   notifyCartContentChange(products.length);
 }
 
-axios.get(`${Resources.PRODUCT}/${props.id}`).then(({ data }) => {
-  product.value = data;
+function loadProducts() {
+  axios.get(Resources.PRODUCT).then(({ data }) => {
+    products.value = data;
+  });
+}
+
+function loadProduct() {
+  axios.get(`${Resources.PRODUCT}/${props.id}`).then(({ data }) => {
+    product.value = data;
+  });
+}
+
+function isInCart(productId) {
+  console.log("productId", productId);
+  console.log("products", products.value);
+  return products.value.some((product) => product.id === productId);
+}
+
+onMounted(() => {
+  loadProducts();
+  loadProduct();
 });
 </script>

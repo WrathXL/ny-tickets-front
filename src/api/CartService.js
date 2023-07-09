@@ -3,10 +3,15 @@ import { Resources } from "./resources";
 const CART_STORAGE_KEY = "cartId";
 
 export const CartService = {
+  async getNewCart() {
+    localStorage.removeItem(CART_STORAGE_KEY);
+    return await this.getCart();
+  },
   async getCart() {
     let cartId = localStorage.getItem(CART_STORAGE_KEY);
     if (!cartId) {
       cartId = (await axios.post(Resources.CART)).data.id;
+      localStorage.setItem(CART_STORAGE_KEY, cartId);
     }
     return cartId;
   },

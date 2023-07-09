@@ -52,10 +52,18 @@ async function getCardId() {
 
 async function load() {
   const cartId = await getCardId();
-  axios.get(`${Resources.CART}/${cartId}`).then(({ data }) => {
+  try {
+    const { data } = await axios.get(`${Resources.CART}/${cartId}`);
     cartItems.value = data;
     notifyCartContentChange(data.length);
-  });
+  } catch (error) {
+    if (error.response.status === 404) {
+      const newCart = await CartService.getNewCart();
+      const { data } = await axios.get(`${Resources.CART}/${newCart}`);
+      cartItems.value = data;
+      notifyCartContentChange(data.length);
+    }
+  }
 }
 
 async function onDeleteItem(productId) {
