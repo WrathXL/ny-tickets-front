@@ -10,6 +10,9 @@
   window.viewerReady = function (api, platform) {
     // Initializations
 
+    const siteUrl =
+      "https://64ab2b59af181566af7c3600--rococo-bienenstitch-a26827.netlify.app";
+
     // * Add bootstrap css
     document.body.insertAdjacentHTML(
       "beforeend",
@@ -34,7 +37,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <iframe src="http://localhost:9000/cart/" width="100%" height="400px"></iframe>
+              <iframe src="${siteUrl}/cart/" width="100%" height="400px"></iframe>
             </div>
         </div>
       </div>
@@ -57,7 +60,7 @@
 
     // * CTA on product detail page
     api.setProductAction(function (products, onOpen, onClose) {
-      var url = `http://localhost:9000/product/${products[0].webshopIdentifier}`; // create a URL based on products
+      var url = `${siteUrl}/product/${products[0].webshopIdentifier}`; // create a URL based on products
       onOpen(); // update the address bar and browser title
 
       // show custom product page
