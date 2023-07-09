@@ -1,38 +1,51 @@
 <template>
   <q-card flat v-if="product && products" class="fit">
-    <q-card-section class="row justify-center">
-      <q-img :src="product.url" width="500px" height="400px" />
+    <q-card-section horizontal>
+      <q-card-section>
+        <q-img :src="product.url" width="400px" height="400px" />
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        <div class="q-mt-xl">
+          <div class="text-h4 q-mt-md">{{ product.name }}</div>
+          <div class="text-h6 text-weight-bold q-mt-md">
+            ${{ product.price }}
+          </div>
+          <div class="text-subtitle text-grey q-mt-md">
+            {{ product.description }}
+          </div>
+        </div>
+      </q-card-section>
     </q-card-section>
-    <q-card-section class="q-pt-none">
-      <div class="text-h5 q-mt-md">{{ product.name }}</div>
-      <div class="text-caption text-grey q-mt-md">
-        {{ product.description }}
+    <q-card-section>
+      <div>
+        <q-btn
+          v-if="!isInCart"
+          color="primary"
+          icon="mdi-cart"
+          icons-size="sm"
+          no-caps
+          class="text-weight-bold text-h6"
+          @click="onAddToCart"
+        >
+          Add the ticket
+        </q-btn>
+        <div v-else>
+          <q-btn
+            color="positive"
+            icon="mdi-cart-check"
+            icons-size="sm"
+            no-caps
+            class="text-weight-bold text-h6"
+          >
+            You added this ticket
+          </q-btn>
+
+          <div class="q-mt-sm text-grey text-caption">
+            Close this to continue shopping
+          </div>
+        </div>
       </div>
     </q-card-section>
-
-    <q-card-actions class="row justify-center q-mt-lg">
-      <q-btn
-        v-if="!isInCart"
-        color="primary"
-        icon="mdi-cart"
-        icons-size="sm"
-        no-caps
-        class="text-weight-bold text-h6"
-        @click="onAddToCart"
-      >
-        Add to cart
-      </q-btn>
-      <q-btn
-        v-else
-        color="positive"
-        icon="mdi-cart-check"
-        icons-size="sm"
-        no-caps
-        class="text-weight-bold text-h6"
-      >
-        You added this product to your cart
-      </q-btn>
-    </q-card-actions>
   </q-card>
 </template>
 
