@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { CartService, Resources } from "src/api";
+import { notifyCartContentChange } from "src/tools";
 import { ref } from "vue";
 
 const props = defineProps({
@@ -33,7 +34,8 @@ const stars = ref(4);
 const product = ref();
 
 async function onAddToCart() {
-  await CartService.add(props.id);
+  const products = await CartService.add(props.id);
+  notifyCartContentChange(products.length);
 }
 
 axios.get(`${Resources.PRODUCT}/${props.id}`).then(({ data }) => {

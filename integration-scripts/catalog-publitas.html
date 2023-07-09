@@ -41,24 +41,23 @@
         `;
       return div;
     }
+    let modalDiv = createModalDiv();
+    document.body.appendChild(modalDiv);
 
     // Viewer API
 
     // * Cart button on the sidebar
     api.setCartButtonAction(function () {
-      const modalDiv = createModalDiv();
+      modalDiv.remove();
+      modalDiv = createModalDiv();
       document.body.appendChild(modalDiv);
       const modal = new bootstrap.Modal("#modal");
-      modalDiv.addEventListener("hidden.bs.modal", function () {
-        modalDiv.remove();
-      });
       modal.show();
     }, "See cart items");
 
     // * CTA on product detail page
     api.setProductAction(function (products, onOpen, onClose) {
       var url = `http://localhost:9000/product/${products[0].webshopIdentifier}`; // create a URL based on products
-      console.log(products);
       onOpen(); // update the address bar and browser title
 
       // show custom product page

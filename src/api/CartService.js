@@ -14,7 +14,8 @@ export const CartService = {
   async add(productId) {
     const cartId = await this.getCart();
     localStorage.setItem(CART_STORAGE_KEY, cartId);
-    await axios.post(Resources.ADD_TO_CART(cartId, productId));
+    const { data } = await axios.post(Resources.ADD_TO_CART(cartId, productId));
+    return data;
   },
   async remove(cartId, productId) {
     await axios.delete(Resources.REMOVE_FROM_CART(cartId, productId));

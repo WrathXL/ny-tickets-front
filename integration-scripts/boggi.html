@@ -1,0 +1,165 @@
+<script
+  type="text/javascript"
+  src="https://unpkg.com/micromodal/dist/micromodal.min.js"
+  nonce="k35V8/f6yDBSBqB8m9NHIw=="
+></script>
+<script nonce="k35V8/f6yDBSBqB8m9NHIw==">
+  (function () {
+    let initialised = false;
+
+    setTimeout(function () {
+      initModal("pb");
+    }, 0);
+
+    // initialize API
+    window.viewerReady = function (api, platform) {
+      window.parent.postMessage(JSON.stringify(["viewerReady"]), "*");
+      api.setProductAction(function (products, onOpen, onClose, defaultAction) {
+        console.log(platform);
+        console.log(products);
+        if (!initialised) {
+          return defaultAction();
+        }
+        onClose();
+        let state = window.history.state;
+        let url = Reader.instance.router.generateUrl(state);
+        parent.postMessage(
+          JSON.stringify([
+            "stateChange",
+            {
+              state,
+              url,
+            },
+          ]),
+          "*"
+        );
+
+        if (products.length == 1) {
+          window.parent.postMessage(
+            JSON.stringify(["showProduct", [products[0].webshopIdentifier]]),
+            "*"
+          );
+        } else {
+          switch (platform) {
+            case "desktop":
+              let productIds = products.map((item) => {
+                return item.webshopIdentifier;
+              });
+              window.parent.postMessage(
+                JSON.stringify(["showProduct", productIds]),
+                "*"
+              );
+              break;
+            case "tablet":
+            case "mobile":
+              showThumbnails(products);
+              break;
+          }
+        }
+      });
+
+      setTimeout(function () {
+        let observer = new MutationObserver(function (mutationsList) {
+          for (const mutation of mutationsList) {
+            if (
+              mutation.type === "childList" &&
+              document.querySelector(".product-badge")
+            ) {
+              let clickEvent = new MouseEvent("click", {
+                view: window,
+                bubbles: true,
+                cancelable: false,
+              });
+              document
+                .querySelector(".product-badge")
+                .dispatchEvent(clickEvent);
+              document.querySelector(".exit button").dispatchEvent(clickEvent);
+              break;
+            }
+          }
+        });
+        if (document.getElementById("list_view")) {
+          observer.observe(document.getElementById("list_view"), {
+            childList: true,
+            subtree: true,
+          });
+        }
+      }, 0);
+    };
+
+    // initialize integration
+    window.addEventListener("message", function (message) {
+      try {
+        var event = JSON.parse(message.data);
+        var eventType = event[0];
+        var eventData = event[1];
+      } catch (e) {
+        var eventType = null;
+      }
+      if (eventType === "initIntegration") {
+        initialised = true;
+      }
+    });
+
+    function initModal(id) {
+      let modal = document.createElement("div");
+      modal.id = id;
+      modal.classList.add(id, "micromodal-slide", "modal");
+      modal.setAttribute("aria-hidden", "true");
+      modal.innerHTML =
+        '<div class="modal_overlay" tabindex="-1" data-micromodal-close>' +
+        '<div class="modal_container" role="dialog" aria-modal="true" aria-labelledby="modal-title" >' +
+        '<div class="header"></div>' +
+        '<a class="modal_close" aria-label="Close" data-micromodal-close>&times;</a>' +
+        '<a class="modal_back" aria-label="Back">&#8701;</a>' +
+        '<div class="modal_content" id="' +
+        id +
+        '-modal-content"></div>' +
+        "</div></div>";
+      document.body.appendChild(modal);
+
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        '<link rel="stylesheet" type="text/css" href="https://dev-assets.publitastest.nl/plugins/ecom-light/styles.css">'
+      );
+    }
+
+    function showThumbnails(products) {
+      let container = document.getElementById("pb-modal-content");
+      container.style.removeProperty("max-width");
+      container.style.removeProperty("max-height");
+      container.classList.add("thumbnails");
+      container.classList.remove("product");
+      let content = "";
+      products.forEach((child) => {
+        content +=
+          '<div data-pid="' +
+          child.webshopIdentifier +
+          '"class="item" data-url="' +
+          child.webshopUrl +
+          '">' +
+          '<img src="' +
+          child.photoSharingUrl +
+          '" atl="' +
+          child.title +
+          '"><span>' +
+          child.title +
+          "</span></div>";
+      });
+      container.innerHTML = content;
+      document.querySelector(".modal_back").style.display = "none";
+      let thumbs = document.querySelectorAll(".thumbnails .item");
+      for (thumb of thumbs) {
+        (function (pid) {
+          thumb.onclick = function () {
+            window.parent.postMessage(
+              JSON.stringify(["showProduct", [pid]]),
+              "*"
+            );
+          };
+        })(thumb.dataset.pid);
+      }
+      MicroModal.show("pb");
+    }
+  })();
+</script>

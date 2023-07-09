@@ -32,6 +32,7 @@
 import { onMounted, ref } from "vue";
 import { CartService, Resources } from "../api";
 import axios from "axios";
+import { notifyCartContentChange } from "src/tools";
 
 const props = defineProps({
   id: {
@@ -53,6 +54,7 @@ async function load() {
   const cartId = await getCardId();
   axios.get(`${Resources.CART}/${cartId}`).then(({ data }) => {
     cartItems.value = data;
+    notifyCartContentChange(data.length);
   });
 }
 
