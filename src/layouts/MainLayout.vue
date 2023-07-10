@@ -19,6 +19,13 @@
         <q-btn flat @click="$router.push('/catalogs')"> Catalogs </q-btn>
         <q-btn flat round icon="mdi-cart">
           <q-badge color="orange" floating>{{ cart.items }}</q-badge>
+          <q-menu :offset="[60, 25]">
+            <q-card flat style="width: 500px">
+              <q-card-section>
+                <cart-detail />
+              </q-card-section>
+            </q-card>
+          </q-menu>
         </q-btn>
       </q-toolbar>
     </q-header>
@@ -30,6 +37,7 @@
 </template>
 
 <script setup>
+import CartDetail from "src/components/CartDetail.vue";
 import { useCounterStore } from "../stores";
 const cart = useCounterStore();
 </script>

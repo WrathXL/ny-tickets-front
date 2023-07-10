@@ -1,10 +1,9 @@
 <template>
-  <q-card flat v-if="product && products" class="fit">
-    <q-card-section horizontal>
-      <q-card-section>
-        <q-img :src="product.url" width="400px" height="400px" />
-      </q-card-section>
-      <q-card-section class="q-pt-none">
+  <q-card flat v-if="product && products" style="width: 700px">
+    <q-card-section class="row">
+      <q-img :src="product.url" class="col-7" height="450px" />
+
+      <q-card-section class="q-pt-none col">
         <div class="q-mt-xl">
           <div class="text-h4 q-mt-md">{{ product.name }}</div>
           <div class="text-h6 text-weight-bold q-mt-md">
@@ -52,6 +51,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { CartService, Resources } from "src/api";
+import { useCounterStore } from "src/stores";
 import { notifyCartContentChange } from "src/tools";
 import { computed, onMounted, ref } from "vue";
 
@@ -72,6 +72,7 @@ async function onAddToCart() {
   const productId = products.value.find((p) => p.slug === props.slug).id;
   cart.value = await CartService.add(productId);
   notifyCartContentChange(cart.value.length);
+  useCounterStore().counter = cart.value.length;
 }
 
 async function loadCart() {
