@@ -1,15 +1,23 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
+import { CartService } from "../api";
 
-export const useCounterStore = defineStore('counter', {
-  state: () => ({
-    counter: 0,
-  }),
+export const useCounterStore = defineStore("counter", {
+  state: () => {
+    return {
+      counter: 0,
+    };
+  },
   getters: {
-    doubleCount: (state) => state.counter * 2,
+    items: (state) => state.counter,
   },
   actions: {
     increment() {
       this.counter++;
+    },
+    loadState() {
+      CartService.getCartItems().then((data) => {
+        this.counter = data.length;
+      });
     },
   },
 });

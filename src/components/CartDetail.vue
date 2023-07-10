@@ -55,6 +55,7 @@ import { onMounted, ref, computed } from "vue";
 import { CartService, Resources } from "../api";
 import axios from "axios";
 import { notifyCartContentChange } from "src/tools";
+import { useCounterStore } from "src/stores";
 
 const props = defineProps({
   id: {
@@ -76,18 +77,22 @@ async function getCardId() {
   return cartId;
 }
 
+function setCart(data) {
+  cartItems.value = data;
+  notifyCartContentChange(data.length);
+  useCounterStore().counter = data.length;
+}
+
 async function load() {
   const cartId = await getCardId();
   try {
     const { data } = await axios.get(`${Resources.CART}/${cartId}`);
-    cartItems.value = data;
-    notifyCartContentChange(data.length);
+    setCart(data);
   } catch (error) {
     if (error.response.status === 404) {
       const newCart = await CartService.getNewCart();
       const { data } = await axios.get(`${Resources.CART}/${newCart}`);
-      cartItems.value = data;
-      notifyCartContentChange(data.length);
+      setCart(data);
     }
   }
 }

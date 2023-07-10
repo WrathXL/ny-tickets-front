@@ -10,7 +10,7 @@
   window.viewerReady = function (api, platform) {
     // Initializations
 
-    const siteUrl = "https://rococo-bienenstitch-a26827.netlify.app";
+    const siteUrl = "http://127.0.0.1:9000";
 
     // * Add bootstrap css
     document.body.insertAdjacentHTML(
@@ -59,14 +59,19 @@
 
     // * CTA on product detail page
     api.setProductAction(function (products, onOpen, onClose) {
-      var url = `${siteUrl}/product/${products[0].webshopIdentifier}`; // create a URL based on products
-      onOpen(); // update the address bar and browser title
-
-      // show custom product page
-      api
-        .showExternalContent(url)
-        // revert the address bar and browser title once iframe is closed
-        .on("close", onClose);
+      if (window.self != window.top) {
+        window.top.postMessage(
+          JSON.stringify({
+            action: "show",
+            product: products[0].webshopIdentifier,
+          }),
+          "*"
+        );
+      } else {
+        var url = `${siteUrl}/product/${products[0].webshopIdentifier}`;
+        onOpen();
+        api.showExternalContent(url).on("close", onClose);
+      }
     });
   };
 </script>
