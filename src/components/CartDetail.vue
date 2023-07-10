@@ -106,5 +106,11 @@ async function onDeleteItem(productId) {
 
 onMounted(() => {
   load();
+  window.addEventListener("message", (event) => {
+    const data = JSON.parse(event.data);
+    if (data.action && data.action == "reload") {
+      load();
+    }
+  });
 });
 </script>
